@@ -17,3 +17,5 @@
 }
 .memorial-photo-controls [hidden] { display: none; }
 #memorialPhotoStatus:empty { display: none; }
+
+#accountButton { margin-inline-start: .5rem; }

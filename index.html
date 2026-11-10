@@ -8,6 +8,8 @@
   <title>Lux Aeterna | Memorial Prayers & Candles</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.89.0/dist/umd/supabase.js" integrity="sha384-sddcMIX7Ar6auuLM3TihDPYO6uOeMYsjtmZKfi8V83eeqdFWdnpAtk90odEwbXjh" crossorigin="anonymous" defer></script>
+  <script src="assets/js/cloud.js" defer></script>
   <script src="assets/js/app.js" defer></script>
 </head>
 <body>
@@ -26,7 +28,10 @@
       <a href="#about" data-view="about">About</a>
     </nav>
   </header>
-  <div class="demo-banner" role="note"><span class="status-dot"></span> <strong>Standalone prototype</strong> · Entries are saved only in this browser, not online. Do not use shared devices for private memorial details.</div>
+  <div class="demo-banner">
+    <span id="accountStatus" role="status">Checking account…</span>
+    <button type="button" id="accountButton" class="mini-btn">Sign In</button>
+  </div>
 
   <main id="main">
     <section id="home" class="view active" aria-labelledby="heroTitle">
@@ -74,13 +79,27 @@
 
     <section id="about" class="view content-wrap inner-page" aria-labelledby="aboutTitle">
       <div class="page-heading"><div><span class="eyebrow">OUR PURPOSE</span><h1 id="aboutTitle">About Lux Aeterna</h1><p>A quiet space for remembrance, rooted in the Christian hope of eternal life.</p></div></div>
-      <div class="about-panel"><div class="about-cross">✝</div><h2>In prayer, we remember.</h2><p>Lux Aeterna is a devotional memorial experience from CrownMind Institute. It offers a place to record the names of deceased loved ones, light symbolic virtual candles, and offer prayers for their eternal repose.</p><p>The sanctuary is inspired by Catholic prayer for the faithful departed. Its purpose is remembrance and supplication, not the promise of a spiritual outcome: the departed are entrusted to the mercy and judgment of God.</p><p>Essential devotional features are intended to remain free. This initial edition is a standalone browser demonstration; private online accounts, cross-device access, and public prayer sharing are not yet active.</p><a class="button button-outline" href="https://www.crownmind.net" target="_blank" rel="noopener noreferrer">Visit CrownMind Institute ↗</a></div>
-      <div class="data-tools"><h2>Browser data controls</h2><p>Your memorials and prayers are currently stored only in this browser. Export them for your own backup or erase this browser's Lux Aeterna data.</p><div class="button-row"><button type="button" class="button button-muted" id="exportDataBtn">Export My Data (.json)</button><button type="button" class="button button-danger" id="clearDataBtn">Delete All Local Data</button></div></div>
+      <div class="about-panel"><div class="about-cross">✝</div><h2>In prayer, we remember.</h2><p>Lux Aeterna is a devotional memorial experience from CrownMind Institute. It offers a place to record the names of deceased loved ones, light symbolic virtual candles, and offer prayers for their eternal repose.</p><p>The sanctuary is inspired by Catholic prayer for the faithful departed. Its purpose is remembrance and supplication, not the promise of a spiritual outcome: the departed are entrusted to the mercy and judgment of God.</p><p>Essential devotional features are intended to remain free. Sign in to keep your private memorials, photos, candles, and prayers available across devices. You can also use the sanctuary with records saved only in this browser.</p><a class="button button-outline" href="https://www.crownmind.net" target="_blank" rel="noopener noreferrer">Visit CrownMind Institute ↗</a></div>
+      <div class="data-tools"><h2>Data controls</h2><p>Export the records in your current view. Browser records and online account records are stored separately.</p><div class="button-row"><button type="button" class="button button-muted" id="exportDataBtn">Export My Data (.json)</button><button type="button" class="button button-danger" id="clearDataBtn">Delete All Local Data</button></div></div>
     </section>
   </main>
 
-  <footer class="site-footer"><div class="footer-inner"><div><div class="footer-brand">✝ &nbsp; LUX AETERNA</div><p>May perpetual light shine upon them.</p></div><div class="footer-links"><a href="privacy.html">Privacy Policy</a><a href="https://www.crownmind.net" target="_blank" rel="noopener noreferrer">CrownMind Institute ↗</a></div></div><p class="copyright">© <span id="year"></span> CrownMind Institute · A devotional memorial prototype</p></footer>
+  <footer class="site-footer"><div class="footer-inner"><div><div class="footer-brand">✝ &nbsp; LUX AETERNA</div><p>May perpetual light shine upon them.</p></div><div class="footer-links"><a href="privacy.html">Privacy Policy</a><a href="https://www.crownmind.net" target="_blank" rel="noopener noreferrer">CrownMind Institute ↗</a></div></div><p class="copyright">© <span id="year"></span> CrownMind Institute · A devotional memorial sanctuary</p></footer>
 
+  <dialog id="accountDialog" class="app-dialog" aria-labelledby="accountTitle">
+    <form id="accountForm" class="dialog-body">
+      <div class="dialog-heading"><h2 id="accountTitle">Your Lux Aeterna Account</h2><button type="button" class="close-button" data-close aria-label="Close">×</button></div>
+      <label for="accountEmail">Email address</label>
+      <input type="email" id="accountEmail" autocomplete="username" required>
+      <label for="accountPassword">Password</label>
+      <input type="password" id="accountPassword" autocomplete="current-password" required>
+      <p id="accountMessage" class="form-hint" role="status"></p>
+      <div class="dialog-actions">
+        <button type="submit" class="button button-gold" value="signin">Sign In</button>
+        <button type="submit" class="button button-muted" value="signup">Create Account</button>
+      </div>
+    </form>
+  </dialog>
   <dialog id="memorialDialog" class="app-dialog" aria-labelledby="memorialDialogTitle"><form id="memorialForm" class="dialog-body"><div class="dialog-heading"><div><span class="eyebrow">THE MEMORIAL REGISTER</span><h2 id="memorialDialogTitle">Enroll a Loved One</h2></div><button class="close-button" type="button" data-close aria-label="Close">×</button></div><input id="memorialId" type="hidden"><label for="fullName">Name of the departed <span class="required">*</span></label><input id="fullName" name="fullName" maxlength="120" required placeholder="Full name"><div class="two-fields"><div><label for="birthDate">Date of birth <span class="optional">(optional)</span></label><input id="birthDate" type="date"></div><div><label for="deathDate">Date of passing <span class="optional">(optional)</span></label><input id="deathDate" type="date"></div></div><label for="tribute">A remembrance <span class="optional">(optional)</span></label><textarea id="tribute" maxlength="600" rows="4" placeholder="A few words in loving memory…"></textarea><label for="memorialPhoto">Photo of your loved one <span class="optional">(optional)</span></label>
     <input id="memorialPhoto" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="memorialPhotoHint memorialPhotoStatus">
     <p id="memorialPhotoHint" class="form-hint">Choose a JPEG, PNG, or WebP image up to 10 MB.</p>
@@ -89,11 +108,11 @@
       <img id="memorialPhotoPreview" class="memorial-photo" alt="Selected memorial photo" hidden>
       <button id="removeMemorialPhoto" class="mini-btn" type="button" hidden>Remove Photo</button>
     </div>
-    <p class="form-hint">This entry is private to this browser in the prototype. Do not enter sensitive information.</p><div class="dialog-actions"><button class="button button-muted" type="button" data-close>Cancel</button><button class="button button-gold" id="saveMemorial" type="submit">Save Memorial</button></div></form></dialog>
+    <p class="form-hint">Your memorial is saved to the storage shown in the account bar.</p><div class="dialog-actions"><button class="button button-muted" type="button" data-close>Cancel</button><button class="button button-gold" id="saveMemorial" type="submit">Save Memorial</button></div></form></dialog>
 
   <dialog id="candleDialog" class="app-dialog" aria-labelledby="candleDialogTitle"><form id="candleForm" class="dialog-body"><div class="dialog-heading"><div><span class="eyebrow">AN OFFERING OF LIGHT</span><h2 id="candleDialogTitle">Light a Candle</h2></div><button class="close-button" type="button" data-close aria-label="Close">×</button></div><label for="candleMemorial">For the remembrance of <span class="required">*</span></label><select id="candleMemorial" required></select><p class="form-hint">The symbolic candle will glow for 24 hours from this moment.</p><div class="dialog-actions"><button class="button button-muted" type="button" data-close>Cancel</button><button class="button button-gold" type="submit">Light Candle</button></div></form></dialog>
 
-  <dialog id="prayerDialog" class="app-dialog" aria-labelledby="prayerDialogTitle"><form id="prayerForm" class="dialog-body"><div class="dialog-heading"><div><span class="eyebrow">PRAYER INTENTION</span><h2 id="prayerDialogTitle">Offer a Prayer</h2></div><button class="close-button" type="button" data-close aria-label="Close">×</button></div><label for="prayerMemorial">For the remembrance of <span class="required">*</span></label><select id="prayerMemorial" required></select><label for="prayerText">Your prayer <span class="required">*</span></label><textarea id="prayerText" maxlength="1500" rows="6" required placeholder="Lord, in Your mercy, receive…"></textarea><p class="form-hint">Only this browser stores the prayer in the prototype.</p><div class="dialog-actions"><button class="button button-muted" type="button" data-close>Cancel</button><button class="button button-gold" type="submit">Offer Prayer</button></div></form></dialog>
+  <dialog id="prayerDialog" class="app-dialog" aria-labelledby="prayerDialogTitle"><form id="prayerForm" class="dialog-body"><div class="dialog-heading"><div><span class="eyebrow">PRAYER INTENTION</span><h2 id="prayerDialogTitle">Offer a Prayer</h2></div><button class="close-button" type="button" data-close aria-label="Close">×</button></div><label for="prayerMemorial">For the remembrance of <span class="required">*</span></label><select id="prayerMemorial" required></select><label for="prayerText">Your prayer <span class="required">*</span></label><textarea id="prayerText" maxlength="1200" rows="6" required placeholder="Lord, in Your mercy, receive…"></textarea><p class="form-hint">Your prayer is private and saved to the storage shown in the account bar.</p><div class="dialog-actions"><button class="button button-muted" type="button" data-close>Cancel</button><button class="button button-gold" type="submit">Offer Prayer</button></div></form></dialog>
 
   <dialog id="confirmDialog" class="app-dialog confirm-dialog" aria-labelledby="confirmTitle"><div class="dialog-body"><div class="dialog-heading"><h2 id="confirmTitle">Confirm action</h2><button class="close-button" type="button" data-close aria-label="Close">×</button></div><p id="confirmMessage"></p><div class="dialog-actions"><button type="button" class="button button-muted" data-close>Cancel</button><button type="button" class="button button-danger" id="confirmAccept">Confirm</button></div></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
