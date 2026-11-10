@@ -143,7 +143,7 @@ function activeMemorialCandles(now){
   return active;
 }
 
-function memorialCandle(candle,now){
+function burningCandle(candle,now){
   const remaining=candleExpiry(candle)-now;
   const waxHeight=4+56*Math.min(1,remaining/(candleExpiry(candle)-candle.createdAt));
   const illustration=el('div','memorial-candle-illustration');
@@ -188,7 +188,7 @@ card.append(el('h3','',m.name));const dates=[humanDate(m.birthDate),humanDate(m.
   candleGroup.setAttribute('aria-label',candles.length===1?'1 burning candle':`${candles.length} burning candles`);
   candles.sort((a,b)=>b.createdAt-a.createdAt);
   for(const candle of candles){
-    candleGroup.append(memorialCandle(candle,now));
+    candleGroup.append(burningCandle(candle,now));
     nextExpiry=Math.min(nextExpiry,candleExpiry(candle));
   }
   entry.append(candleGroup);
@@ -239,8 +239,28 @@ function prayerEntry(prayer,heading){
   article.append(el('p','',prayer.text));
   return article;
 }
-function candleVisual(){const wrap=el('div','candle-illustration');wrap.setAttribute('aria-hidden','true');wrap.append(el('div','wick'),el('div','candle-wax'),el('div','flame'));return wrap;}
-function renderCandles(){const list=$('candleList');list.replaceChildren();const now=Date.now();const active=state.candles.filter(c=>candleExpiry(c)>now&&state.memorials.some(m=>m.id===c.memorialId)).sort((a,b)=>b.createdAt-a.createdAt);if(!active.length){list.append(empty('No candles burning yet','Enrolling a loved one allows you to offer a candle in their memory.','♨'));return;}for(const c of active){const card=el('article','candle-card');card.append(candleVisual(),el('h3','',getName(c.memorialId)));const remain=Math.max(0,candleExpiry(c)-now);const totalMinutes=Math.ceil(remain/60000),hrs=Math.floor(totalMinutes/60),mins=totalMinutes%60;card.append(el('p','',`About ${hrs}h ${mins}m remaining`));list.append(card);}}
+function renderCandles(){
+  const list=$('candleList');
+  list.replaceChildren();
+  const now=Date.now();
+  const active=state.candles
+    .filter(c=>candleExpiry(c)>now&&state.memorials.some(m=>m.id===c.memorialId))
+    .sort((a,b)=>b.createdAt-a.createdAt);
+  if(!active.length){
+    list.append(empty('No candles burning yet','Enrolling a loved one allows you to offer a candle in their memory.','♨'));
+    return;
+  }
+  for(const candle of active){
+    const card=el('article','candle-card');
+    const stage=el('div','candle-stage');
+    stage.append(burningCandle(candle,now));
+    const totalMinutes=Math.ceil((candleExpiry(candle)-now)/60000);
+    const hours=Math.floor(totalMinutes/60);
+    const minutes=totalMinutes%60;
+    card.append(stage,el('h3','',getName(candle.memorialId)),el('p','',`About ${hours}h ${minutes}m remaining`));
+    list.append(card);
+  }
+}
 function renderPrayers(){const list=$('prayerList');list.replaceChildren();const prayers=state.prayers.filter(p=>state.memorials.some(m=>m.id===p.memorialId)).sort((a,b)=>b.createdAt-a.createdAt);if(!prayers.length){list.append(empty('No personal prayers offered yet','Your personal prayers will appear here.'));return;}for(const p of prayers){const article=prayerEntry(p,`For ${getName(p.memorialId)}`);const del=el('button','mini-btn danger','Delete Prayer');del.type='button';del.addEventListener('click',()=>confirmDialog('Delete this prayer?','This personal prayer will be removed from your current storage.',()=>removeRecord('lux_prayers',p.id,()=>({...state,prayers:state.prayers.filter(x=>x.id!==p.id)}),'Prayer deleted.')));article.append(del);list.append(article);}}
 function render(){renderMemorials();renderCandles();renderPrayers();}
 function openNewMemorial(){if(!canChange())return;pendingMemorialId=null;$('memorialForm').reset();resetPhoto();$('memorialId').value='';$('memorialDialogTitle').textContent='Enroll a Loved One';openDialog('memorialDialog');}
