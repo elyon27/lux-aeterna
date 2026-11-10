@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101c2a">
+  <title>Delete Your Account | Lux Aeterna</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.89.0/dist/umd/supabase.js" integrity="sha384-sddcMIX7Ar6auuLM3TihDPYO6uOeMYsjtmZKfi8V83eeqdFWdnpAtk90odEwbXjh" crossorigin="anonymous" defer></script>
+  <script src="assets/js/cloud.js" defer></script>
+  <script src="assets/js/delete-account.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><span class="brand-symbol">✝</span><span class="brand-text"><strong>LUX AETERNA</strong><small>MEMORIAL SANCTUARY</small></span></a>
+    <a class="button button-outline" href="index.html">Back to Sanctuary</a>
+  </header>
+  <main class="content-wrap inner-page">
+    <section class="data-tools">
+      <span class="eyebrow">LUX AETERNA</span>
+      <h1>Delete Your Account</h1>
+      <p>This permanently deletes your login and all online Lux Aeterna memorials, photos, prayers, and candle offerings. Any service that uses this same login will also lose access through it.</p>
+      <p>For records saved while signed out, use <strong>About → Delete All Local Data</strong> on each browser or device where you saved them.</p>
+      <form id="deleteAccountForm" class="dialog-body">
+        <label for="email">Account email</label>
+        <input type="email" id="email" autocomplete="username" required>
+        <label for="password">Current password</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+        <label for="confirmation">Type DELETE to confirm permanent deletion</label>
+        <input type="text" id="confirmation" pattern="DELETE" autocomplete="off" required>
+        <div class="button-row">
+          <button class="button button-danger" type="submit" disabled>Permanently Delete Account</button>
+        </div>
+      </form>
+      <p id="deleteStatus" role="status" aria-live="polite">Loading secure sign-in…</p>
+      <p>Need help accessing your account? Email <a href="mailto:contact@crownmind.net">contact@crownmind.net</a>.</p>
+    </section>
+  </main>
+  <footer class="site-footer"><p class="copyright"><a href="privacy.html">Privacy Policy</a> · CrownMind Institute</p></footer>
+</body>
+</html>
