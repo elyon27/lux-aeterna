@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Lux Aeterna candle and cross</title>
+  <defs>
+    <radialGradient id="night" cx=".5" cy=".43" r=".63">
+      <stop stop-color="#344047"/>
+      <stop offset=".62" stop-color="#182934"/>
+      <stop offset="1" stop-color="#09151f"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fff0be"/>
+      <stop offset=".43" stop-color="#e7be71"/>
+      <stop offset="1" stop-color="#a7753e"/>
+    </linearGradient>
+    <linearGradient id="wax">
+      <stop stop-color="#bd8c4b"/>
+      <stop offset=".38" stop-color="#ffe9ae"/>
+      <stop offset="1" stop-color="#d3a560"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="61" fill="url(#night)" stroke="url(#gold)" stroke-width="3"/>
+  <circle cx="64" cy="64" r="54" fill="none" stroke="#d9ae68" stroke-opacity=".45"/>
+  <path d="M35 81V58a29 29 0 0 1 58 0v23" fill="none" stroke="url(#gold)" stroke-width="1.8" opacity=".62"/>
+  <path d="M64 17l3 5-3 5-3-5zM22 64l3-3 3 3-3 3zM100 64l3-3 3 3-3 3z" fill="#e6c27f"/>
+  <path d="M64 34c1 11 14 16 14 29a14 14 0 0 1-28 0c0-11 10-19 14-29Z" fill="url(#gold)"/>
+  <path d="M64 47v20m-7-13h14" fill="none" stroke="#25323a" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M64 77v5" stroke="#e7be71" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M52 98V83c0-2 2-3 4-3h16c2 0 4 1 4 3v15z" fill="url(#wax)"/>
+  <path d="M45 99h38m-32 6h26" stroke="url(#gold)" stroke-width="2" stroke-linecap="round"/>
+</svg>
