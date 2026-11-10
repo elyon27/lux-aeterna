@@ -132,7 +132,13 @@ function renderMemorials(){const list=$('memorialList');list.replaceChildren();c
   photo.src=m.photo;
   photo.alt='';
   photo.loading='lazy';
-  card.append(photo);
+  const portrait=el('div','memorial-portrait');
+  const leftFlame=el('span','flame memorial-flame');
+  const rightFlame=el('span','flame memorial-flame');
+  leftFlame.setAttribute('aria-hidden','true');
+  rightFlame.setAttribute('aria-hidden','true');
+  portrait.append(leftFlame,photo,rightFlame);
+  card.append(portrait);
 }else{
   card.append(el('div','card-cross','✝'));
 }

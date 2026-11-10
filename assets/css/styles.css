@@ -19,3 +19,26 @@
 #memorialPhotoStatus:empty { display: none; }
 
 #accountButton { margin-inline-start: .5rem; }
+
+.memorial-portrait {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 10rem) 24px;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  gap: clamp(.25rem, 2vw, .75rem);
+  margin-bottom: .75rem;
+}
+.memorial-portrait .memorial-photo { margin-bottom: 0; }
+.memorial-flame {
+  position: relative;
+  left: auto;
+  top: auto;
+}
+.memorial-flame:last-child {
+  animation-duration: 1.65s;
+  animation-delay: -.8s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .memorial-flame { animation: none; }
+}
