@@ -162,7 +162,7 @@ function renderMemorials(){
   const now=Date.now();
   const activeCandles=activeMemorialCandles(now);
   let nextExpiry=Infinity;
-  const list=$('memorialList');list.replaceChildren();const q=$('searchMemorials').value.trim().toLocaleLowerCase();const results=state.memorials.filter(m=>m.name.toLocaleLowerCase().includes(q)).sort((a,b)=>b.createdAt-a.createdAt);$('memorialCount').textContent=`${results.length} memorial${results.length!==1?'s':''}`;if(!results.length){list.append(empty(q?'No matching memorials':'No names enrolled yet',q?'Try another name.':'Begin by enrolling a loved one in the memorial register.'));return;}for(const m of results){const card=el('article','memorial-card');if(m.photo){
+  const list=$('memorialList');list.replaceChildren();const q=$('searchMemorials').value.trim().toLocaleLowerCase();const results=state.memorials.filter(m=>m.name.toLocaleLowerCase().includes(q)).sort((a,b)=>a.createdAt-b.createdAt);$('memorialCount').textContent=`${results.length} memorial${results.length!==1?'s':''}`;if(!results.length){list.append(empty(q?'No matching memorials':'No names enrolled yet',q?'Try another name.':'Begin by enrolling a loved one in the memorial register.'));return;}for(const m of results){const card=el('article','memorial-card');if(m.photo){
   const photo=el('img','memorial-photo');
   photo.src=m.photo;
   photo.alt='';
@@ -178,12 +178,11 @@ function renderMemorials(){
   card.append(el('div','card-cross','✝'));
 }
 card.append(el('h3','',m.name));const dates=[humanDate(m.birthDate),humanDate(m.deathDate)].filter(Boolean);if(dates.length)card.append(el('div','memorial-dates',dates.join(' — ')));if(m.tribute)card.append(el('p','memorial-tribute',m.tribute));const actions=el('div','card-actions');[['Light Candle','candle'],['Offer Prayer','prayer'],['Edit','edit'],['Delete','delete']].forEach(([label,action])=>{const btn=el('button','mini-btn'+(action==='delete'?' danger':''),label);btn.type='button';btn.addEventListener('click',()=>onMemorialAction(action,m.id));actions.append(btn);});card.append(actions);
+  const entry=el('div','memorial-row');
+  entry.append(card);
+  list.append(entry);
   const candles=activeCandles.get(m.id);
-  if(!candles){
-    list.append(card);
-    continue;
-  }
-  const entry=el('div','memorial-with-candle');
+  if(!candles)continue;
   const candleGroup=el('div','memorial-candle-group');
   candleGroup.setAttribute('role','img');
   candleGroup.setAttribute('aria-label',candles.length===1?'1 burning candle':`${candles.length} burning candles`);
@@ -192,8 +191,7 @@ card.append(el('h3','',m.name));const dates=[humanDate(m.birthDate),humanDate(m.
     candleGroup.append(memorialCandle(candle,now));
     nextExpiry=Math.min(nextExpiry,candleExpiry(candle));
   }
-  entry.append(card,candleGroup);
-  list.append(entry);
+  entry.append(candleGroup);
   }
   if(Number.isFinite(nextExpiry)){
     memorialCandleTimer=setTimeout(renderMemorials,Math.max(0,nextExpiry-Date.now()));
