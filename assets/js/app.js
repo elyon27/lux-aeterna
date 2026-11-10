@@ -133,11 +133,11 @@ function renderMemorials(){const list=$('memorialList');list.replaceChildren();c
   photo.alt='';
   photo.loading='lazy';
   const portrait=el('div','memorial-portrait');
-  const leftFlame=el('span','flame memorial-flame');
-  const rightFlame=el('span','flame memorial-flame');
-  leftFlame.setAttribute('aria-hidden','true');
-  rightFlame.setAttribute('aria-hidden','true');
-  portrait.append(leftFlame,photo,rightFlame);
+  const leftCross=el('span','memorial-cross','✝');
+  const rightCross=el('span','memorial-cross','✝');
+  leftCross.setAttribute('aria-hidden','true');
+  rightCross.setAttribute('aria-hidden','true');
+  portrait.append(leftCross,photo,rightCross);
   card.append(portrait);
 }else{
   card.append(el('div','card-cross','✝'));

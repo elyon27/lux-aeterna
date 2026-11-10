@@ -30,15 +30,8 @@
   margin-bottom: .75rem;
 }
 .memorial-portrait .memorial-photo { margin-bottom: 0; }
-.memorial-flame {
-  position: relative;
-  left: auto;
-  top: auto;
-}
-.memorial-flame:last-child {
-  animation-duration: 1.65s;
-  animation-delay: -.8s;
-}
-@media (prefers-reduced-motion: reduce) {
-  .memorial-flame { animation: none; }
+.memorial-cross {
+  color: var(--gold);
+  font-size: 26px;
+  line-height: 1;
 }
