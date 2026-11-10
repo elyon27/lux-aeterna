@@ -33,7 +33,7 @@
 .memorial-angel {
   align-self: stretch;
   width: 100%;
-  background: url("../memorial-angel.svg") center / 100% 100% no-repeat;
+  background: url("../memorial-angel.webp") center / contain no-repeat;
 }
 .memorial-angel:last-child { transform: scaleX(-1); }
 
