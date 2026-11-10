@@ -262,7 +262,38 @@ function renderCandles(){
   }
 }
 function renderPrayers(){const list=$('prayerList');list.replaceChildren();const prayers=state.prayers.filter(p=>state.memorials.some(m=>m.id===p.memorialId)).sort((a,b)=>b.createdAt-a.createdAt);if(!prayers.length){list.append(empty('No personal prayers offered yet','Your personal prayers will appear here.'));return;}for(const p of prayers){const article=prayerEntry(p,`For ${getName(p.memorialId)}`);const del=el('button','mini-btn danger','Delete Prayer');del.type='button';del.addEventListener('click',()=>confirmDialog('Delete this prayer?','This personal prayer will be removed from your current storage.',()=>removeRecord('lux_prayers',p.id,()=>({...state,prayers:state.prayers.filter(x=>x.id!==p.id)}),'Prayer deleted.')));article.append(del);list.append(article);}}
-function render(){renderMemorials();renderCandles();renderPrayers();}
+function renderInMemoriam(){
+  const list=$('inMemoriamList');
+  list.replaceChildren();
+  if(!state.memorials.length){
+    list.append(empty('No memorials yet','Loved ones you enroll in My Memorials will appear here.'));
+    return;
+  }
+  const memorials=state.memorials.slice().sort((a,b)=>a.createdAt-b.createdAt);
+  for(const memorial of memorials){
+    const card=el('article','in-memoriam-card');
+    const thumbnail=el('div','in-memoriam-thumbnail');
+    if(memorial.photo){
+      const photo=el('img');
+      photo.src=memorial.photo;
+      photo.alt='';
+      photo.loading='lazy';
+      thumbnail.append(photo);
+    }else{
+      thumbnail.textContent='✝';
+      thumbnail.setAttribute('aria-hidden','true');
+    }
+    const dates=el('dl','in-memoriam-dates');
+    dates.append(
+      el('dt','','Born'),el('dd','',humanDate(memorial.birthDate)||'Unrecorded'),
+      el('dt','','Died'),el('dd','',humanDate(memorial.deathDate)||'Unrecorded')
+    );
+    card.append(thumbnail,el('h2','',memorial.name),dates);
+    list.append(card);
+  }
+}
+
+function render(){renderMemorials();renderInMemoriam();renderCandles();renderPrayers();}
 function openNewMemorial(){if(!canChange())return;pendingMemorialId=null;$('memorialForm').reset();resetPhoto();$('memorialId').value='';$('memorialDialogTitle').textContent='Enroll a Loved One';openDialog('memorialDialog');}
 function confirmDialog(title,message,onConfirm){$('confirmTitle').textContent=title;$('confirmMessage').textContent=message;confirmAction=onConfirm;openDialog('confirmDialog');}
 document.querySelectorAll('[data-view]').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();navigate(link.dataset.view);}));document.querySelectorAll('[data-goto]').forEach(btn=>btn.addEventListener('click',()=>navigate(btn.dataset.goto)));document.querySelectorAll('[data-open="memorialDialog"]').forEach(btn=>btn.addEventListener('click',openNewMemorial));document.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click',closeDialogs));document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();}));

@@ -23,6 +23,7 @@
     <nav id="primaryNav" class="primary-nav" aria-label="Main navigation">
       <a href="#home" data-view="home" class="active">Sanctuary</a>
       <a href="#memorials" data-view="memorials">My Memorials</a>
+      <a href="#in-memoriam" data-view="in-memoriam">In Memoriam</a>
       <a href="#candles" data-view="candles">Candles</a>
       <a href="#prayers" data-view="prayers">Prayers</a>
       <a href="#about" data-view="about">About</a>
@@ -61,6 +62,13 @@
       <div class="page-heading"><div><span class="eyebrow">REMEMBERED WITH LOVE</span><h1 id="memorialsTitle">My Memorials</h1><p>Names held in remembrance and entrusted to God's mercy.</p></div><button type="button" class="button button-gold" data-open="memorialDialog">+ Enroll a Name</button></div>
       <div class="toolbar"><label class="sr-only" for="searchMemorials">Search memorials</label><input id="searchMemorials" type="search" placeholder="Search a memorial by name…" autocomplete="off"><span id="memorialCount" class="count-label"></span></div>
       <div id="memorialList" class="memorial-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="in-memoriam" class="view content-wrap inner-page" aria-labelledby="inMemoriamTitle">
+      <div class="page-heading">
+        <div><span class="eyebrow">IN LOVING REMEMBRANCE</span><h1 id="inMemoriamTitle">In Memoriam</h1><p>A gallery of loved ones remembered in your memorials.</p></div>
+      </div>
+      <div id="inMemoriamList" class="in-memoriam-grid"></div>
     </section>
 
     <section id="candles" class="view content-wrap inner-page" aria-labelledby="candlesTitle">
