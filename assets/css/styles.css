@@ -38,29 +38,55 @@
 
 .memorial-with-candle {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 36px;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: .4rem;
-  align-items: stretch;
 }
-.memorial-candle {
-  align-self: center;
-  text-align: center;
+.memorial-candle-group {
+  display: flex;
+  align-self: start;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 3px;
+  width: 51px;
 }
+.memorial-candle-group:has(:only-child.memorial-candle-illustration) { width: 28px; }
 .memorial-candle-illustration {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
-  height: 100px;
+  width: 24px;
 }
 .memorial-candle-top {
   position: relative;
   width: 24px;
-  height: 40px;
+  height: 36px;
 }
-.memorial-candle-top .flame {
-  top: 0;
-  left: 3px;
+.memorial-candle-flame {
+  position: absolute;
+  z-index: 1;
+  left: 5px;
+  bottom: 4px;
+  width: 14px;
+  height: 32px;
+  border-radius: 52% 48% 52% 48% / 74% 75% 25% 26%;
+  background:
+    radial-gradient(ellipse 35% 25% at 50% 93%, #5c78ce 2%, #816cb3 34%, transparent 95%),
+    radial-gradient(ellipse 48% 61% at 49% 67%, #fffce5 14%, #fff0ad 38%, #ffc54e 70%, transparent 100%),
+    linear-gradient(#f78a26, #ffc654 65%, #ec7025);
+  box-shadow: 0 0 10px #ffb7509c, 0 0 19px #f087394d;
+  transform-origin: 50% 95%;
+  animation: memorial-flicker 1.7s ease-in-out infinite;
+}
+.memorial-candle-illustration:nth-child(even) .memorial-candle-flame {
+  animation-delay: -.65s;
+  animation-duration: 1.35s;
+}
+@keyframes memorial-flicker {
+  0%, 100% { transform: skewX(-3deg) scale(.97, 1); opacity: .98; }
+  23% { transform: skewX(8deg) scale(.9, 1.05); opacity: 1; }
+  47% { transform: skewX(-8deg) scale(1.05, .91); opacity: .87; }
+  76% { transform: skewX(4deg) scale(.94, 1.02); opacity: 1; }
 }
 .memorial-candle-wick {
   position: absolute;
@@ -68,7 +94,7 @@
   left: 11px;
   width: 2px;
   height: 9px;
-  background: #38271e;
+  background: linear-gradient(#cf6837, #493023 55%);
 }
 .memorial-candle-wax {
   width: 21px;
@@ -81,13 +107,7 @@
 @keyframes memorial-melt {
   to { height: 4px; }
 }
-.memorial-candle-label {
-  display: block;
-  margin-top: .5rem;
-  color: var(--gold2);
-  font: 10px/1.25 Arial, sans-serif;
-}
 @media (prefers-reduced-motion: reduce) {
-  .memorial-candle-top .flame,
+  .memorial-candle-flame,
   .memorial-candle-wax { animation: none; }
 }

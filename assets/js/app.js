@@ -136,10 +136,9 @@ function candleExpiry(candle){
 function activeMemorialCandles(now){
   const active=new Map();
   for(const candle of state.candles){
-    const current=active.get(candle.memorialId);
-    if(candleExpiry(candle)>now&&(!current||candle.createdAt>current.createdAt)){
-      active.set(candle.memorialId,candle);
-    }
+    if(candleExpiry(candle)<=now)continue;
+    if(!active.has(candle.memorialId))active.set(candle.memorialId,[]);
+    active.get(candle.memorialId).push(candle);
   }
   return active;
 }
@@ -147,17 +146,15 @@ function activeMemorialCandles(now){
 function memorialCandle(candle,now){
   const remaining=candleExpiry(candle)-now;
   const waxHeight=4+56*Math.min(1,remaining/(candleExpiry(candle)-candle.createdAt));
-  const candleHolder=el('div','memorial-candle');
   const illustration=el('div','memorial-candle-illustration');
   illustration.setAttribute('aria-hidden','true');
   const top=el('div','memorial-candle-top');
-  top.append(el('span','memorial-candle-wick'),el('span','flame'));
+  top.append(el('span','memorial-candle-wick'),el('span','memorial-candle-flame'));
   const wax=el('div','memorial-candle-wax');
   wax.style.setProperty('--wax-height',waxHeight+'px');
   wax.style.setProperty('--burn-time',remaining+'ms');
   illustration.append(top,wax);
-  candleHolder.append(illustration,el('span','memorial-candle-label','Candle lit'));
-  return candleHolder;
+  return illustration;
 }
 
 function renderMemorials(){
@@ -181,15 +178,22 @@ function renderMemorials(){
   card.append(el('div','card-cross','✝'));
 }
 card.append(el('h3','',m.name));const dates=[humanDate(m.birthDate),humanDate(m.deathDate)].filter(Boolean);if(dates.length)card.append(el('div','memorial-dates',dates.join(' — ')));if(m.tribute)card.append(el('p','memorial-tribute',m.tribute));const actions=el('div','card-actions');[['Light Candle','candle'],['Offer Prayer','prayer'],['Edit','edit'],['Delete','delete']].forEach(([label,action])=>{const btn=el('button','mini-btn'+(action==='delete'?' danger':''),label);btn.type='button';btn.addEventListener('click',()=>onMemorialAction(action,m.id));actions.append(btn);});card.append(actions);
-  const candle=activeCandles.get(m.id);
-  if(!candle){
+  const candles=activeCandles.get(m.id);
+  if(!candles){
     list.append(card);
     continue;
   }
   const entry=el('div','memorial-with-candle');
-  entry.append(card,memorialCandle(candle,now));
+  const candleGroup=el('div','memorial-candle-group');
+  candleGroup.setAttribute('role','img');
+  candleGroup.setAttribute('aria-label',candles.length===1?'1 burning candle':`${candles.length} burning candles`);
+  candles.sort((a,b)=>b.createdAt-a.createdAt);
+  for(const candle of candles){
+    candleGroup.append(memorialCandle(candle,now));
+    nextExpiry=Math.min(nextExpiry,candleExpiry(candle));
+  }
+  entry.append(card,candleGroup);
   list.append(entry);
-  nextExpiry=Math.min(nextExpiry,candleExpiry(candle));
   }
   if(Number.isFinite(nextExpiry)){
     memorialCandleTimer=setTimeout(renderMemorials,Math.max(0,nextExpiry-Date.now()));
