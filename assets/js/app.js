@@ -170,11 +170,11 @@ function renderMemorials(){
   photo.alt='';
   photo.loading='lazy';
   const portrait=el('div','memorial-portrait');
-  const leftCross=el('span','memorial-cross','✝');
-  const rightCross=el('span','memorial-cross','✝');
-  leftCross.setAttribute('aria-hidden','true');
-  rightCross.setAttribute('aria-hidden','true');
-  portrait.append(leftCross,photo,rightCross);
+  const leftAngel=el('span','memorial-angel');
+  const rightAngel=el('span','memorial-angel');
+  leftAngel.setAttribute('aria-hidden','true');
+  rightAngel.setAttribute('aria-hidden','true');
+  portrait.append(leftAngel,photo,rightAngel);
   card.append(portrait);
 }else{
   card.append(el('div','card-cross','✝'));
