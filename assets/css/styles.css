@@ -35,3 +35,59 @@
   font-size: 26px;
   line-height: 1;
 }
+
+.memorial-with-candle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 36px;
+  gap: .4rem;
+  align-items: stretch;
+}
+.memorial-candle {
+  align-self: center;
+  text-align: center;
+}
+.memorial-candle-illustration {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100px;
+}
+.memorial-candle-top {
+  position: relative;
+  width: 24px;
+  height: 40px;
+}
+.memorial-candle-top .flame {
+  top: 0;
+  left: 3px;
+}
+.memorial-candle-wick {
+  position: absolute;
+  bottom: 0;
+  left: 11px;
+  width: 2px;
+  height: 9px;
+  background: #38271e;
+}
+.memorial-candle-wax {
+  width: 21px;
+  height: var(--wax-height);
+  border-radius: 4px 4px 3px 3px;
+  background: linear-gradient(90deg, #ac8c60, #f8e4b8 40%, #d5b783 80%, #98784f);
+  box-shadow: 0 0 12px #efbb6028;
+  animation: memorial-melt var(--burn-time) linear forwards;
+}
+@keyframes memorial-melt {
+  to { height: 4px; }
+}
+.memorial-candle-label {
+  display: block;
+  margin-top: .5rem;
+  color: var(--gold2);
+  font: 10px/1.25 Arial, sans-serif;
+}
+@media (prefers-reduced-motion: reduce) {
+  .memorial-candle-top .flame,
+  .memorial-candle-wax { animation: none; }
+}
