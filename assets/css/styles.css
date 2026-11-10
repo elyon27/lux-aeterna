@@ -190,3 +190,6 @@
 }
 .in-memoriam-dates dt { color: var(--gold); }
 .in-memoriam-dates dd { margin: 0; }
+
+#offeredPrayersTitle { overflow-wrap: anywhere; }
+#allPrayersBtn { margin-bottom: 1rem; }
