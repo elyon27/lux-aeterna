@@ -70,7 +70,7 @@
     </section>
 
     <section id="prayers" class="view content-wrap inner-page" aria-labelledby="prayersTitle">
-      <div class="page-heading"><div><span class="eyebrow">WORDS OF HOPE</span><h1 id="prayersTitle">Prayers for the Departed</h1><p>Pray with the Church and offer a personal intention.</p></div><button type="button" class="button button-gold" id="offerPrayerBtn">+ Offer a Prayer</button></div>
+      <div class="page-heading"><div><span class="eyebrow">WORDS OF HOPE</span><h1 id="prayersTitle">Prayers for the Departed</h1><p>Pray with the Church and offer a personal intention.</p></div><button type="button" class="button button-gold" data-goto="memorials">Choose a Memorial</button></div>
       <div class="prayer-layout">
         <article class="traditional-prayer"><span class="eyebrow">TRADITIONAL PRAYER</span><h2>Eternal Rest</h2><p>Eternal rest grant unto them, O Lord, and let perpetual light shine upon them. May they rest in peace. Amen.</p><div class="prayer-separator"></div><p>May the souls of the faithful departed, through the mercy of God, rest in peace. Amen.</p></article>
         <div><h2 class="subheading">My Offered Prayers</h2><div id="prayerList" aria-live="polite"></div></div>
@@ -112,7 +112,20 @@
 
   <dialog id="candleDialog" class="app-dialog" aria-labelledby="candleDialogTitle"><form id="candleForm" class="dialog-body"><div class="dialog-heading"><div><span class="eyebrow">AN OFFERING OF LIGHT</span><h2 id="candleDialogTitle">Light a Candle</h2></div><button class="close-button" type="button" data-close aria-label="Close">×</button></div><label for="candleMemorial">For the remembrance of <span class="required">*</span></label><select id="candleMemorial" required></select><p class="form-hint">The symbolic candle will glow for 24 hours from this moment.</p><div class="dialog-actions"><button class="button button-muted" type="button" data-close>Cancel</button><button class="button button-gold" type="submit">Light Candle</button></div></form></dialog>
 
-  <dialog id="prayerDialog" class="app-dialog" aria-labelledby="prayerDialogTitle"><form id="prayerForm" class="dialog-body"><div class="dialog-heading"><div><span class="eyebrow">PRAYER INTENTION</span><h2 id="prayerDialogTitle">Offer a Prayer</h2></div><button class="close-button" type="button" data-close aria-label="Close">×</button></div><label for="prayerMemorial">For the remembrance of <span class="required">*</span></label><select id="prayerMemorial" required></select><label for="prayerText">Your prayer <span class="required">*</span></label><textarea id="prayerText" maxlength="1200" rows="6" required placeholder="Lord, in Your mercy, receive…"></textarea><p class="form-hint">Your prayer is private and saved to the storage shown in the account bar.</p><div class="dialog-actions"><button class="button button-muted" type="button" data-close>Cancel</button><button class="button button-gold" type="submit">Offer Prayer</button></div></form></dialog>
+  <dialog id="prayerDialog" class="app-dialog" aria-labelledby="prayerDialogTitle"><form id="prayerForm" class="dialog-body"><div class="dialog-heading"><div><span class="eyebrow">PRAYER INTENTION</span><h2 id="prayerDialogTitle">Offer a Prayer</h2></div><button class="close-button" type="button" data-close aria-label="Close">×</button></div><input id="prayerMemorialId" type="hidden"><p class="form-hint">For the remembrance of <strong id="prayerMemorialName" class="prayer-recipient"></strong></p><label for="prayerText">Your prayer <span class="required">*</span></label><textarea id="prayerText" maxlength="1200" rows="6" required placeholder="Lord, in Your mercy, receive…"></textarea><p class="form-hint">Your prayer is private and saved to the storage shown in the account bar.</p><div class="dialog-actions"><button class="button button-muted" type="button" data-close>Cancel</button><button class="button button-gold" type="submit">Offer Prayer</button></div></form></dialog>
+  <dialog id="memorialPrayersDialog" class="app-dialog" aria-labelledby="memorialPrayersTitle" aria-describedby="memorialPrayersName">
+    <div class="dialog-body">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">IN LOVING REMEMBRANCE</span>
+          <h2 id="memorialPrayersTitle">Prayers Offered For This Soul</h2>
+          <p id="memorialPrayersName" class="prayer-recipient"></p>
+        </div>
+        <button type="button" class="close-button" data-close aria-label="Close">×</button>
+      </div>
+      <div id="memorialPrayersList"></div>
+    </div>
+  </dialog>
 
   <dialog id="confirmDialog" class="app-dialog confirm-dialog" aria-labelledby="confirmTitle"><div class="dialog-body"><div class="dialog-heading"><h2 id="confirmTitle">Confirm action</h2><button class="close-button" type="button" data-close aria-label="Close">×</button></div><p id="confirmMessage"></p><div class="dialog-actions"><button type="button" class="button button-muted" data-close>Cancel</button><button type="button" class="button button-danger" id="confirmAccept">Confirm</button></div></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

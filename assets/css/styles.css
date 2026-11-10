@@ -108,3 +108,8 @@
   .memorial-candle-flame,
   .memorial-candle-wax { animation: none; }
 }
+
+.prayer-recipient {
+  color: var(--gold2);
+  overflow-wrap: anywhere;
+}

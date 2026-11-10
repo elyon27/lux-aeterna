@@ -177,7 +177,7 @@ function renderMemorials(){
 }else{
   card.append(el('div','card-cross','✝'));
 }
-card.append(el('h3','',m.name));const dates=[humanDate(m.birthDate),humanDate(m.deathDate)].filter(Boolean);if(dates.length)card.append(el('div','memorial-dates',dates.join(' — ')));if(m.tribute)card.append(el('p','memorial-tribute',m.tribute));const actions=el('div','card-actions');[['Light Candle','candle'],['Offer Prayer','prayer'],['Edit','edit'],['Delete','delete']].forEach(([label,action])=>{const btn=el('button','mini-btn'+(action==='delete'?' danger':''),label);btn.type='button';btn.addEventListener('click',()=>onMemorialAction(action,m.id));actions.append(btn);});card.append(actions);
+card.append(el('h3','',m.name));const dates=[humanDate(m.birthDate),humanDate(m.deathDate)].filter(Boolean);if(dates.length)card.append(el('div','memorial-dates',dates.join(' — ')));if(m.tribute)card.append(el('p','memorial-tribute',m.tribute));const actions=el('div','card-actions');[['Light Candle','candle'],['Offer Prayer','prayer'],['Prayers Offered For This Soul','prayer-history'],['Edit','edit'],['Delete','delete']].forEach(([label,action])=>{const btn=el('button','mini-btn'+(action==='delete'?' danger':''),label);btn.type='button';btn.addEventListener('click',()=>onMemorialAction(action,m.id));actions.append(btn);});card.append(actions);
   const entry=el('div','memorial-row');
   entry.append(card);
   list.append(entry);
@@ -197,12 +197,51 @@ card.append(el('h3','',m.name));const dates=[humanDate(m.birthDate),humanDate(m.
     memorialCandleTimer=setTimeout(renderMemorials,Math.max(0,nextExpiry-Date.now()));
   }
 }
-function onMemorialAction(action,id){if(action==='edit'){const m=state.memorials.find(x=>x.id===id);if(!m)return;if(!canChange())return;pendingMemorialId=null;resetPhoto(m.photo);$('memorialId').value=m.id;$('fullName').value=m.name;$('birthDate').value=m.birthDate||'';$('deathDate').value=m.deathDate||'';$('tribute').value=m.tribute||'';$('memorialDialogTitle').textContent='Edit Memorial';openDialog('memorialDialog');return;}if(action==='delete'){confirmDialog('Delete this memorial?',`This will permanently remove ${getName(id)} and all linked prayers and candles from your current storage.`,()=>removeRecord('lux_memorials',id,()=>withoutMemorial(id),'Memorial and linked offerings deleted.'));return;}openOffering(action,id);}
+function onMemorialAction(action,id){if(action==='prayer-history'){openMemorialPrayers(id);return;}if(action==='edit'){const m=state.memorials.find(x=>x.id===id);if(!m)return;if(!canChange())return;pendingMemorialId=null;resetPhoto(m.photo);$('memorialId').value=m.id;$('fullName').value=m.name;$('birthDate').value=m.birthDate||'';$('deathDate').value=m.deathDate||'';$('tribute').value=m.tribute||'';$('memorialDialogTitle').textContent='Edit Memorial';openDialog('memorialDialog');return;}if(action==='delete'){confirmDialog('Delete this memorial?',`This will permanently remove ${getName(id)} and all linked prayers and candles from your current storage.`,()=>removeRecord('lux_memorials',id,()=>withoutMemorial(id),'Memorial and linked offerings deleted.'));return;}openOffering(action,id);}
 function fillSelect(id,selectedId){const select=$(id);select.replaceChildren();const option=el('option','','Choose a memorial…');option.value='';select.append(option);state.memorials.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(m=>{const o=el('option','',m.name);o.value=m.id;select.append(o);});select.value=selectedId||'';}
-function openOffering(type,selectedId){if(!canChange())return;if(!state.memorials.length){notify('First enroll a loved one in My Memorials.');navigate('memorials');openNewMemorial();return;}const isCandle=type==='candle';fillSelect(isCandle?'candleMemorial':'prayerMemorial',selectedId);openDialog(isCandle?'candleDialog':'prayerDialog');}
+function openOffering(type,selectedId){
+  if(!canChange())return;
+  if(!state.memorials.length){
+    notify('First enroll a loved one in My Memorials.');
+    navigate('memorials');
+    openNewMemorial();
+    return;
+  }
+  if(type==='candle'){
+    fillSelect('candleMemorial',selectedId);
+    openDialog('candleDialog');
+    return;
+  }
+  const memorial=state.memorials.find(m=>m.id===selectedId);
+  if(!memorial)return;
+  $('prayerForm').reset();
+  $('prayerMemorialId').value=memorial.id;
+  $('prayerMemorialName').textContent=memorial.name;
+  openDialog('prayerDialog');
+}
+
+function openMemorialPrayers(id){
+  const memorial=state.memorials.find(m=>m.id===id);
+  if(!memorial)return;
+  const list=$('memorialPrayersList');
+  const prayers=state.prayers.filter(prayer=>prayer.memorialId===id).sort((a,b)=>b.createdAt-a.createdAt);
+  $('memorialPrayersName').textContent=memorial.name;
+  list.replaceChildren();
+  if(!prayers.length)list.append(empty('No prayers offered yet','Prayers offered for this soul will appear here.'));
+  for(const prayer of prayers)list.append(prayerEntry(prayer));
+  openDialog('memorialPrayersDialog');
+}
+
+function prayerEntry(prayer,heading){
+  const article=el('article','prayer-item');
+  article.append(el('small','',humanTime(prayer.createdAt)));
+  if(heading)article.append(el('h3','',heading));
+  article.append(el('p','',prayer.text));
+  return article;
+}
 function candleVisual(){const wrap=el('div','candle-illustration');wrap.setAttribute('aria-hidden','true');wrap.append(el('div','wick'),el('div','candle-wax'),el('div','flame'));return wrap;}
 function renderCandles(){const list=$('candleList');list.replaceChildren();const now=Date.now();const active=state.candles.filter(c=>candleExpiry(c)>now&&state.memorials.some(m=>m.id===c.memorialId)).sort((a,b)=>b.createdAt-a.createdAt);if(!active.length){list.append(empty('No candles burning yet','Enrolling a loved one allows you to offer a candle in their memory.','♨'));return;}for(const c of active){const card=el('article','candle-card');card.append(candleVisual(),el('h3','',getName(c.memorialId)));const remain=Math.max(0,candleExpiry(c)-now);const totalMinutes=Math.ceil(remain/60000),hrs=Math.floor(totalMinutes/60),mins=totalMinutes%60;card.append(el('p','',`About ${hrs}h ${mins}m remaining`));list.append(card);}}
-function renderPrayers(){const list=$('prayerList');list.replaceChildren();const prayers=state.prayers.filter(p=>state.memorials.some(m=>m.id===p.memorialId)).sort((a,b)=>b.createdAt-a.createdAt);if(!prayers.length){list.append(empty('No personal prayers offered yet','Your personal prayers will appear here.'));return;}for(const p of prayers){const article=el('article','prayer-item');article.append(el('small','',humanTime(p.createdAt)),el('h3','',`For ${getName(p.memorialId)}`),el('p','',p.text));const del=el('button','mini-btn danger','Delete Prayer');del.type='button';del.addEventListener('click',()=>confirmDialog('Delete this prayer?','This personal prayer will be removed from your current storage.',()=>removeRecord('lux_prayers',p.id,()=>({...state,prayers:state.prayers.filter(x=>x.id!==p.id)}),'Prayer deleted.')));article.append(del);list.append(article);}}
+function renderPrayers(){const list=$('prayerList');list.replaceChildren();const prayers=state.prayers.filter(p=>state.memorials.some(m=>m.id===p.memorialId)).sort((a,b)=>b.createdAt-a.createdAt);if(!prayers.length){list.append(empty('No personal prayers offered yet','Your personal prayers will appear here.'));return;}for(const p of prayers){const article=prayerEntry(p,`For ${getName(p.memorialId)}`);const del=el('button','mini-btn danger','Delete Prayer');del.type='button';del.addEventListener('click',()=>confirmDialog('Delete this prayer?','This personal prayer will be removed from your current storage.',()=>removeRecord('lux_prayers',p.id,()=>({...state,prayers:state.prayers.filter(x=>x.id!==p.id)}),'Prayer deleted.')));article.append(del);list.append(article);}}
 function render(){renderMemorials();renderCandles();renderPrayers();}
 function openNewMemorial(){if(!canChange())return;pendingMemorialId=null;$('memorialForm').reset();resetPhoto();$('memorialId').value='';$('memorialDialogTitle').textContent='Enroll a Loved One';openDialog('memorialDialog');}
 function confirmDialog(title,message,onConfirm){$('confirmTitle').textContent=title;$('confirmMessage').textContent=message;confirmAction=onConfirm;openDialog('confirmDialog');}
@@ -298,7 +337,6 @@ $('memorialForm').addEventListener('submit',e=>{
 });
 $('searchMemorials').addEventListener('input',renderMemorials);
 $('lightCandleBtn').addEventListener('click',()=>openOffering('candle'));
-$('offerPrayerBtn').addEventListener('click',()=>openOffering('prayer'));
 $('candleForm').addEventListener('submit',e=>{
   e.preventDefault();
   const memorialId=$('candleMemorial').value;
@@ -312,7 +350,7 @@ $('candleForm').addEventListener('submit',e=>{
 });
 $('prayerForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  const memorialId=$('prayerMemorial').value,text=$('prayerText').value.trim();
+  const memorialId=$('prayerMemorialId').value,text=$('prayerText').value.trim();
   if(!text||!state.memorials.some(m=>m.id===memorialId))return;
   const prayer={id:uid(),memorialId,text,createdAt:Date.now()};
   const updated=()=>({...state,prayers:[...state.prayers,prayer]});
