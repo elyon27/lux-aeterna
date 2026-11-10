@@ -195,3 +195,20 @@
 
 #offeredPrayersTitle { overflow-wrap: anywhere; }
 #allPrayersBtn { margin-bottom: 1rem; }
+
+.terms-copy {
+  max-width: 48rem;
+  color: #dad9d2;
+  line-height: 1.8;
+}
+.terms-copy h2 {
+  margin: 1.75rem 0 .5rem;
+  color: var(--gold2);
+  font-weight: normal;
+}
+.terms-copy p { margin: 0 0 1rem; }
+.terms-copy a {
+  color: var(--gold);
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
